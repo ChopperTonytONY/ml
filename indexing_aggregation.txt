@@ -1,0 +1,86 @@
+
+Craete Index:
+> db.Student.createIndex({Stud_Roll_No: 01})
+{
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "createdCollectionAutomatically" : false,
+        "ok" : 1
+}
+> db.Student.createIndex({Stud_Roll_No: 04})
+{
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "createdCollectionAutomatically" : false,
+        "ok" : 1
+}
+Get Index
+> db.Student.getIndexes()
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "Stud_Roll_No" : 1
+                },
+                "name" : "Stud_Roll_No_1"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "Stud_Roll_No" : 4
+                },
+                "name" : "Stud_Roll_No_4"
+        }
+]
+Drop index
+> db.Student.dropIndexes()
+{
+        "nIndexesWas" : 3,
+        "msg" : "non-_id indexes dropped for collection",
+        "ok" : 1
+}
+> db.Student.getIndexes()
+[ { "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_" } ]
+> db.Student.createIndex({Stud_Roll_No: 04})
+{
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "createdCollectionAutomatically" : false,
+        "ok" : 1
+}
+> db.Student.dropIndex({Stud_Roll_No: 04})
+{ "nIndexesWas" : 2, "ok" : 1 }
+> db.Student.getIndexes()
+[ { "v" : 2, "key" : { "_id" : 1 }, "name" : "_id_" } ]
+
+Aggregation:
+>db.Student.aggregate({$group:{_id:"$Status", sum:{$sum:"$Stud_Roll_No"}}})
+{ "_id" : "Failed", "sum" : 9 }
+{ "_id" : "Passed", "sum" : 6 }
+>db.Student.aggregate({$group:{_id:"$Stud_Roll_No", avg:{$avg:"$Stud_Roll_No"}}})
+{ "_id" : 1, "avg" : 1 }
+{ "_id" : 2, "avg" : 2 }
+{ "_id" : 3, "avg" : 3 }
+{ "_id" : 5, "avg" : 5 }
+{ "_id" : 4, "avg" : 4 }
+>db.Student.aggregate({$group:{_id:"$Status", avg:{$avg:"$Stud_Roll_No"}}})
+{ "_id" : "Failed", "avg" : 4.5 }
+{ "_id" : "Passed", "avg" : 2 }
+> db.Student.aggregate({$group:{_id:"$max", max:{$max:"$Stud_Roll_No"}}})
+{ "_id" : null, "max" : 5 }
+> db.Student.aggregate({$group:{_id:"$min", min:{$min:"$Stud_Roll_No"}}})
+{ "_id" : null, "min" : 1 }
+> db.Student.aggregate({$group:{_id:"$Status", name:{$push:"$Stud_Name"}}})
+{ "_id" : "Failed", "name" : [ "Joey", "Srinidhi" ] }
+{ "_id" : "Passed", "name" : [ "Aarohi", "Vrushali", "Monica" ] }
+>db.Student.aggregate({$group:{_id:"$Status",sum:{$sum:"$Stud_Roll_No"}}}, $match:{sum:{$lte: 7}}})
+{ "_id" : "Passed", "sum" : 6 }
+>db.Student.aggregate({$group:{_id:"$Status",sum:{$sum:"$Stud_Roll_No"}}}, {$match:{sum:{$gte: 7}}})
+{ "_id" : "Failed", "sum" : 9 }

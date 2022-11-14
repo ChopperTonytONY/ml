@@ -1,0 +1,3 @@
+> var mapFunction2 = function() {emit(null, this.Population);};
+> var reduceFunction2= function(Country, Population) {return Array.sum(Population);};
+> db.MapReduce_King.mapReduce(mapFunction2, reduceFunction2, {out:"Result"});
